@@ -6,15 +6,15 @@ import base64
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-import spacy
-from gensim import corpora, models
-from gensim.models import Word2Vec
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Embedding
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from sklearn.model_selection import train_test_split
+#from sklearn.feature_extraction.text import TfidfVectorizer
+#import spacy
+#from gensim import corpora, models
+#from gensim.models import Word2Vec
+#from tensorflow.keras.models import Sequential
+#from tensorflow.keras.layers import LSTM, Dense, Embedding
+#from tensorflow.keras.preprocessing.text import Tokenizer
+#from tensorflow.keras.preprocessing.sequence import pad_sequences
+#from sklearn.model_selection import train_test_split
 
 class job_market:
   def __init__(self, api_key):
@@ -105,53 +105,7 @@ class job_market:
     plt.grid(True)
     plt.show()
 
-  def extract_noun_phrases(self, text):
-    nlp = spacy.load("en_core_web_sm")
-    doc = nlp(text)
-    return [chunk.text for chunk in doc.noun_chunks]
 
-  def topic_modeling(self, documents):
-    dictionary = corpora.Dictionary([doc.split() for doc in documents])
-    corpus = [dictionary.doc2bow(doc.split()) for doc in documents]
-    lda_model = models.LdaModel(corpus, num_topics=5, id2word=dictionary, passes=15)
-    return lda_model.print_topics(num_words=5)
-
-  def train_word2vec(self, documents):
-    word2vec_model = Word2Vec(documents, vector_size=100, window=5, min_count=1, workers=4)
-    word2vec_model.train(documents, total_examples=len(documents), epochs=10)
-    return word2vec_model
-
-  def prepare_lstm_data(self, documents, max_length, vocab_size):
-      """
-      Prepares the text data for LSTM training.
-      :param documents: List of text documents (job descriptions).
-      :param max_length: Maximum length of the sequences.
-      :param vocab_size: Size of the vocabulary.
-      :return: Padded sequences of text data.
-      """
-
-      # Initialize and fit the tokenizer
-      tokenizer = Tokenizer(num_words=vocab_size, oov_token="<OOV>")
-      tokenizer.fit_on_texts(documents)
-
-      # Convert text to sequences of integers
-      sequences = tokenizer.texts_to_sequences(documents)
-
-      # Pad the sequences to ensure uniform length
-      padded_sequences = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
-
-      return padded_sequences, tokenizer
-
-
-  def train_lstm_model(self, X_train, y_train, vocab_size, embedding_dim, max_length):
-    model = Sequential()
-    model.add(Embedding(input_dim=vocab_size, output_dim=embedding_dim, input_length=max_length))
-    model.add(LSTM(units=50))
-    model.add(Dense(1, activation='sigmoid'))
-
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(X_train, y_train, epochs=10, batch_size=64)
-    return model
 api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'
 
 import streamlit as st

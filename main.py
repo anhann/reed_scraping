@@ -79,7 +79,7 @@ class job_market:
                       xytext=(0,10),  # distance from text to points (x,y)
                       ha='center')  # horizontal alignment can be left, right or center
     plt.xticks(rotation=45)
-    plt.show()
+    st.pyplot(plt)
   def plot_salary_ranges(self, data_df):
     # Remove NaN values and reset index
     data_df = data_df.dropna(subset=['minimumSalary', 'maximumSalary']).reset_index(drop=True)
@@ -103,7 +103,7 @@ class job_market:
     plt.ylabel('Salary')
     plt.legend()
     plt.grid(True)
-    plt.show()
+    st.pyplot(plt)
 
 
 api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'

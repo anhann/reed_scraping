@@ -149,7 +149,17 @@ def main():
         location = st.text_input("Enter Location to see Jobs' details")
         if location:
             filtered_data = data_df[data_df['locationName'].str.contains(location, case=False)]
-            st.write(filtered_data[['jobTitle', 'minimumSalary', 'maximumSalary', 'employerName', 'applications', 'jobUrl']])
+                   # Iterate through the filtered data and display clickable URLs
+            for index, row in filtered_data.iterrows():
+                job_title = row['jobTitle']
+                salary_range = f"{row['minimumSalary']} - {row['maximumSalary']}"
+                employer = row['employerName']
+                applications = row['applications']
+                job_url = row['jobUrl']
+    
+                # Create a markdown string with a clickable link
+                job_link = f"[{job_title}]({job_url})"
+                st.markdown(f"{job_link} - {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

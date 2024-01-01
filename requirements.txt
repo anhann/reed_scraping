@@ -4,7 +4,6 @@ numpy
 matplotlib
 streamlit
 requests
-base64
 datetime
 sklearn
 gensim

@@ -5,6 +5,7 @@ import requests
 import base64
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
+import streamlit as st
 
 #from sklearn.feature_extraction.text import TfidfVectorizer
 #import spacy
@@ -22,8 +23,8 @@ class job_market:
     self.encoded_api_key = base64.b64encode(f"{api_key}:".encode()).decode()
     self.headers = {'Authorization': f'Basic {self.encoded_api_key}'}
 
-  def get_data(self, job, location, distance):
-    url = f'https://www.reed.co.uk/api/1.0/search?keywords={job}&location={location}&distancefromlocation={distance}'
+  def get_data(self, job):
+    url = f'https://www.reed.co.uk/api/1.0/search?keywords={job}'
     response = requests.get(url, headers=self.headers)
     data_json = response.json()
     data_df = pd.DataFrame(data_json['results'])
@@ -108,39 +109,46 @@ class job_market:
 
 api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'
 
-import streamlit as st
 
 # Initialize your class (replace 'your_api_key' with your actual key)
 job_api = job_market('646bb8ba-a4bf-4d22-b895-b62fdc8a2996')
 
-# Streamlit app layout
+
 def main():
     st.title("Job Market Analysis Tool")
 
-    # Sidebar for input
-    st.sidebar.title("Input")
-    job = st.sidebar.text_input("Job Title")
-    location = st.sidebar.text_input("Location")
-    distance = st.sidebar.slider("Distance from Location (miles)", 0, 100, 10)
-    aggregation = st.sidebar.radio("Aggregation for Job Posts by Date", ('day', 'week'))
+    # Stage 1: Fetch Data Based on Job Title
+    job_title = st.text_input("Enter Job Title")
+    if st.button("Fetch Data"):
+        data_df = job_api.get_data(job_title)
+        if not data_df.empty:
+            st.write("Data Fetched Successfully")
 
-    # Button to fetch data
-    if st.sidebar.button("Fetch Data"):
-        data_df = job_api.get_data(job, location, distance)
-        st.write("Data Fetched Successfully")
+            # Stage 2: Choose Further Action
+            st.sidebar.title("Further Actions")
+            action = st.sidebar.selectbox("Choose an action", 
+                                          ["View Job Stats", "Filter by Location", "View Plots"])
 
-        # Display job stats
-        total_job, job_per_day, application_per_job = job_api.job_stats(data_df)
-        st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}")
+            if action == "View Job Stats":
+                # Display job stats
+                total_job, job_per_day, application_per_job = job_api.job_stats(data_df)
+                st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}")
+                st.write(f"Jobs counts in last 30 days. Number of applications is only considered jobs that have been posted for more than 2 weeks")
+              
 
-        # Plotting
-        with st.expander("Show Jobs by Date"):
-            job_api.plot_jobs_by_date(data_df, aggregation)
+            elif action == "Filter by Location":
+                location = st.sidebar.text_input("Enter Location")
+                if location:
+                    filtered_data = data_df[data_df['locationName'].str.contains(location, case=False)]
+                    st.write(filtered_data[['jobTitle', 'minimumSalary', 'maximumSalary', 'employerName', 'applications', 'jobUrl']])
 
-        with st.expander("Show Salary Ranges"):
-            job_api.plot_salary_ranges(data_df)
+            elif action == "View Plots":
+                aggregation = st.sidebar.radio("Select Aggregation Type", ('day', 'week'))
+                job_api.plot_jobs_by_date(data_df, aggregation)
 
-# Run the app
+        else:
+            st.write("No data found for this job title.")
+
 if __name__ == "__main__":
     main()
 

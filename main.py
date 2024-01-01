@@ -130,12 +130,12 @@ def main():
             st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}")
             st.write(f"Jobs counts in last 30 days. Number of applications is only considered jobs that have been posted for more than 2 weeks")
 
-          with st.expander("View Number of Jobs Plot"):  
-            aggregation = st.sidebar.radio("Select Aggregation Type", ('day', 'week'))
-            job_api.plot_jobs_by_date(data_df, aggregation)
-
-          with st.expander("View Salary Ranges"):  
-            job_api.plot_salary_ranges(data_df)
+            with st.expander("View Number of Jobs Plot"):
+              aggregation = st.sidebar.radio("Select Aggregation Type", ('day', 'week'))
+              job_api.plot_jobs_by_date(data_df, aggregation)
+  
+            with st.expander("View Salary Ranges"):  
+              job_api.plot_salary_ranges(data_df)
             
             location = st.sidebar.text_input("Enter Location")
             if location:

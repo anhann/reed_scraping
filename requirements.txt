@@ -3,3 +3,10 @@ pandas>2.0
 numpy<=1.25.1
 matplotlib
 streamlit
+requests
+base64
+datetime
+sklearn
+gensim
+tensorflow
+

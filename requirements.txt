@@ -5,7 +5,7 @@ matplotlib
 streamlit
 requests
 datetime
-sklearn
+scikit-learn
 gensim
 tensorflow
 

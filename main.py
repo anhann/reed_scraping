@@ -115,11 +115,11 @@ job_api = job_market('646bb8ba-a4bf-4d22-b895-b62fdc8a2996')
 
 
 def main():
-    st.title("Job Market Analysis Tool")
+    st.title("Reed Jobs Analysis Tool")
 
     # Stage 1: Fetch Data Based on Job Title
     job_title = st.text_input("Enter Job Title")
-    if st.button("Fetch Data"):
+    if st.button("Click to get data"):
         data_df = job_api.get_data(job_title)
         if not data_df.empty:
             st.write("Data Fetched Successfully")
@@ -129,14 +129,18 @@ def main():
             total_job, job_per_day, application_per_job = job_api.job_stats(data_df)
             st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}")
             st.write(f"Jobs counts in last 30 days. Number of applications is only considered jobs that have been posted for more than 2 weeks")
-      
+
+          with st.expander("View Number of Jobs Plot"):  
+            aggregation = st.sidebar.radio("Select Aggregation Type", ('day', 'week'))
+            job_api.plot_jobs_by_date(data_df, aggregation)
+
+          with st.expander("View Salary Ranges"):  
+            job_api.plot_salary_ranges(data_df)
+            
             location = st.sidebar.text_input("Enter Location")
             if location:
                 filtered_data = data_df[data_df['locationName'].str.contains(location, case=False)]
                 st.write(filtered_data[['jobTitle', 'minimumSalary', 'maximumSalary', 'employerName', 'applications', 'jobUrl']])
-
-            aggregation = st.sidebar.radio("Select Aggregation Type", ('day', 'week'))
-            job_api.plot_jobs_by_date(data_df, aggregation)
 
         else:
             st.write("No data found for this job title.")

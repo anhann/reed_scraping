@@ -124,27 +124,19 @@ def main():
         if not data_df.empty:
             st.write("Data Fetched Successfully")
 
-            # Stage 2: Choose Further Action
-            st.sidebar.title("Further Actions")
-            action = st.sidebar.selectbox("Choose an action", 
-                                          ["View Job Stats", "Filter by Location", "View Plots"])
 
-            if action == "View Job Stats":
-                # Display job stats
-                total_job, job_per_day, application_per_job = job_api.job_stats(data_df)
-                st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}")
-                st.write(f"Jobs counts in last 30 days. Number of applications is only considered jobs that have been posted for more than 2 weeks")
-              
+            # Display job stats
+            total_job, job_per_day, application_per_job = job_api.job_stats(data_df)
+            st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}")
+            st.write(f"Jobs counts in last 30 days. Number of applications is only considered jobs that have been posted for more than 2 weeks")
+      
+            location = st.sidebar.text_input("Enter Location")
+            if location:
+                filtered_data = data_df[data_df['locationName'].str.contains(location, case=False)]
+                st.write(filtered_data[['jobTitle', 'minimumSalary', 'maximumSalary', 'employerName', 'applications', 'jobUrl']])
 
-            elif action == "Filter by Location":
-                location = st.sidebar.text_input("Enter Location")
-                if location:
-                    filtered_data = data_df[data_df['locationName'].str.contains(location, case=False)]
-                    st.write(filtered_data[['jobTitle', 'minimumSalary', 'maximumSalary', 'employerName', 'applications', 'jobUrl']])
-
-            elif action == "View Plots":
-                aggregation = st.sidebar.radio("Select Aggregation Type", ('day', 'week'))
-                job_api.plot_jobs_by_date(data_df, aggregation)
+            aggregation = st.sidebar.radio("Select Aggregation Type", ('day', 'week'))
+            job_api.plot_jobs_by_date(data_df, aggregation)
 
         else:
             st.write("No data found for this job title.")

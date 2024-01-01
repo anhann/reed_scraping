@@ -146,7 +146,7 @@ def main():
         with st.expander("View Salary Ranges"):  
             job_api.plot_salary_ranges(data_df)
 
-        location = st.text_input("Enter Location")
+        location = st.text_input("Enter Location to see Jobs' details")
         if location:
             filtered_data = data_df[data_df['locationName'].str.contains(location, case=False)]
             st.write(filtered_data[['jobTitle', 'minimumSalary', 'maximumSalary', 'employerName', 'applications', 'jobUrl']])

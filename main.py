@@ -1,4 +1,4 @@
-pip install requirement.txt
+pip install -r requirement.txt
 import pandas as pd
 import numpy as np
 import csv

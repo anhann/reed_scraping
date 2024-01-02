@@ -85,7 +85,13 @@ class job_market:
     # Remove NaN values and reset index
     data_df = data_df.dropna(subset=['minimumSalary', 'maximumSalary']).reset_index(drop=True)
 
-    # Optionally, handle outliers here...
+    # Remover outliers
+    Q1 = data_df['minimumSalary'].quantile(0.25)
+    Q3 = data_df['minimumSalary'].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    data_df = data_df[(data_df['minimumSalary'] >= lower_bound) & (data_df['minimumSalary'] <= upper_bound)]
 
     # Plotting
     plt.figure(figsize=(12, 6))
@@ -116,6 +122,7 @@ job_api = job_market('646bb8ba-a4bf-4d22-b895-b62fdc8a2996')
 
 def main():
     st.title("Reed Jobs Analysis Tool")
+    st.markdown("By Anh")
 
     if 'data_df' not in st.session_state:
         st.session_state['data_df'] = None
@@ -135,7 +142,7 @@ def main():
         # Display job stats
         total_job, job_per_day, application_per_job = job_api.job_stats(data_df)
         st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}")
-        st.write(f"Jobs counts in last 30 days. Number of applications is only considered jobs that have been posted for more than 2 weeks")
+        st.write(f"Jobs counts in last 30 days. Number of applications per job is only considered jobs that have been posted for more than 2 weeks")
 
         with st.expander("View Number of Jobs Plot"):
             selected_aggregation = st.session_state.get('aggregation', 'day')
@@ -143,7 +150,8 @@ def main():
             st.session_state['aggregation'] = aggregation
             job_api.plot_jobs_by_date(data_df, aggregation)
 
-        with st.expander("View Salary Ranges"):  
+        with st.expander("View Salary Ranges"):
+            st.write("Note: Outliers are removed")
             job_api.plot_salary_ranges(data_df)
 
         location = st.text_input("Enter Location to see Jobs' details")
@@ -159,7 +167,7 @@ def main():
     
                 # Create a markdown string with a clickable link
                 job_link = f"[{job_title}]({job_url})"
-                st.markdown(f"{job_link} - {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
+                st.markdown(f"{job_link} - Salary: {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

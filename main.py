@@ -222,8 +222,8 @@ def main():
         
                 # Alternatively, using Matplotlib for more customization
                 fig, ax = plt.subplots()
-                ax.bar(['Your Salary Percentile', 'Rest of Market'], [user_percentile, 100 - user_percentile], color=['green', 'grey'])
-                ax.set_ylabel('Percentile')
+                ax.barh(['Your Salary Percentile', 'Rest of Market'], [user_percentile, 100 - user_percentile], color=['blue', 'grey'])
+                ax.set_xlabel('Percentile')
                 ax.set_title('Salary Market Position')
                 st.pyplot(fig)
           

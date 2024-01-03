@@ -64,8 +64,8 @@ class job_market:
     application_per_job = np.mean(qualified_jobs['applications'])
 
     
-    med_min=np.median(data_df['minimumSalary'].dropna()[df['minimumSalary']>1000])
-    med_max=np.median(data_df['maximumSalary'].dropna()[df['maximumSalary']>1000])
+    med_min=np.median(data_df['minimumSalary'].dropna()[data_df['minimumSalary']>1000])
+    med_max=np.median(data_df['maximumSalary'].dropna()[data_df['maximumSalary']>1000])
     return total_job, job_per_day, application_per_job, med_min, med_max
 
   def plot_jobs_by_date(self, data_df, aggregation='day'):

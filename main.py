@@ -222,7 +222,7 @@ def main():
                 ax.set_title('Your Position in the Salary Market')
                 ax.legend()
                 plt.tight_layout()  # Adjust layout to fit all labels
-                plt.figure(figsize=(12,6))
+                plt.figure(figsize=(12,3))
                 st.pyplot(fig)
               
         with st.expander("View Jobs' details by Location"):

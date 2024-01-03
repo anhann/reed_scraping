@@ -171,7 +171,7 @@ def main():
 
         # Display job stats
         total_job, job_per_day, application_per_job, med_min, med_max = job_api.job_stats(data_df)
-        st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}, Type salary range: £{med_min} to £{med_max}")
+        st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}, Type salary range: £{med_min: .0f} to £{med_max: .0f}")
         st.write(f"Jobs counts in last 30 days. Number of applications per job is only considered jobs that have been posted for more than 2 weeks")
 
         with st.expander("View Number of Jobs Plot"):

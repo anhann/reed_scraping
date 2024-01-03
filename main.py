@@ -155,7 +155,9 @@ def main():
 
     job_title = st.text_input("Enter Job Title")
     if st.button("Click to get data"):
+        loading_message = st.markdown("Fetching job description, this might take a while...")
         data_df = job_api.get_data(job_title)
+        loading_message.empty()
         if not data_df.empty:
             st.session_state['data_df'] = data_df
             st.write("Data Fetched Successfully")

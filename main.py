@@ -234,7 +234,7 @@ def main():
             st.session_state['salary_expander'] = not st.session_state['salary_expander']
             st.session_state['location_expander'] = not st.session_state['location_expander']
            
-        with st.expander("Compare Your Salary to Market", expanded=st.session_state['salary_expander'], on_change=toggle_salary_expander):
+        with st.expander("Compare Your Salary to Market", expanded=st.session_state['salary_expander']):
             user_salary = st.number_input("Enter Your Salary", min_value=0)
 
             if st.button("Compare Salary"):

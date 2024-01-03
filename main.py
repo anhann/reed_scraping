@@ -209,18 +209,20 @@ def main():
             user_salary = st.number_input("Enter Your Salary", min_value=0)
             location = st.selectbox("Select Location (optional)", ['Nationwide'] + list(data_df['locationName'].unique()))
             if st.button("Compare Salary"):
-                if location == 'Nationwide':
-                    location = None
-                comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
-                st.write(comparison_result)
-        
-                # Using Matplotlib for horizontal bar chart
-                fig, ax = plt.subplots()
-                ax.barh(['Your Salary Percentile', 'Rest of Market'], [user_percentile, 100 - user_percentile], color=['blue', 'grey'])
-                ax.set_xlabel('Percentile')
-                ax.set_title('Salary Market Position')
-                plt.tight_layout()  # Adjust layout to fit all labels
-                st.pyplot(fig)
+                    if location == 'Nationwide':
+                        location = None
+                    comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
+                    st.write(comparison_result)
+            
+                    # Using Matplotlib for a stacked horizontal bar chart
+                    fig, ax = plt.subplots()
+                    ax.barh("Salary Comparison", user_percentile, color='green', label='Your Salary Percentile')
+                    ax.barh("Salary Comparison", 100 - user_percentile, left=user_percentile, color='grey', label='Rest of Market')
+                    ax.set_xlabel('Percentile')
+                    ax.set_title('Your Position in the Salary Market')
+                    ax.legend()
+                    plt.tight_layout()  # Adjust layout to fit all labels
+                    st.pyplot(fig)
 
           
         with st.expander("View Jobs' details by Location"):

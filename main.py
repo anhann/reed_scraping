@@ -214,25 +214,23 @@ def main():
                 comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
                 st.write(comparison_result)
         
-                # Using Matplotlib for histogram-like plot
+                # Combine min and max salaries
+                all_salaries = np.concatenate([data_df['minimumSalary'].values, data_df['maximumSalary'].values])
+        
+                # Create histogram
                 fig, ax = plt.subplots()
-                
-                # Create a range of salary bins
-                salary_bins = range(int(data_df['minimumSalary'].min()), int(data_df['maximumSalary'].max()) + 1, 1000)  # Adjust bin size as needed
+                bin_size = 5000  # Adjust as needed
+                bins = np.arange(all_salaries.min(), all_salaries.max() + bin_size, bin_size)
+                ax.hist(all_salaries, bins=bins, color='silver', label='Market Salary Range')
         
-                # Plot all salaries in grey
-                ax.hist(data_df['minimumSalary'], bins=salary_bins, color='silver', label='Market Salary Range')
-        
-                # Highlight user's salary in light blue
+                # Highlight user's salary
                 ax.axvline(x=user_salary, color='lightskyblue', linewidth=2, label='Your Salary')
-        
                 ax.set_xlabel('Salary')
                 ax.set_ylabel('Frequency')
                 ax.set_title('Your Position in the Salary Market')
                 ax.legend()
-                plt.tight_layout()  # Adjust layout to fit all labels
+                plt.tight_layout()
                 st.pyplot(fig)
-
           
         with st.expander("View Jobs' details by Location"):
             unique_locations = data_df['locationName'].unique()

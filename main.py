@@ -219,7 +219,7 @@ def main():
         
                 # Create histogram
                 fig, ax = plt.subplots()
-                bin_size = 5000  # Adjust as needed
+                bin_size = 20  # Adjust as needed
                 bins = np.arange(all_salaries.min(), all_salaries.max() + bin_size, bin_size)
                 ax.hist(all_salaries, bins=bins, color='silver', label='Market Salary Range')
         

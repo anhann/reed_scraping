@@ -184,9 +184,11 @@ def main():
             st.write("Note: Outliers are removed")
             job_api.plot_salary_ranges(data_df)
 
-        location = st.text_input("Enter Location to see Jobs' details")
-        if location:
-            filtered_data = data_df[data_df['locationName'].str.contains(location, case=False)]
+        unique_locations = data_df['locationName'].unique()
+        selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations)
+
+        if selected_location:
+            filtered_data = data_df[data_df['locationName'] == selected_location]
                    # Iterate through the filtered data and display clickable URLs
             for index, row in filtered_data.iterrows():
                 job_title = row['jobTitle']

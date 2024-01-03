@@ -6,6 +6,8 @@ import base64
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import streamlit as st
+from bs4 import BeautifulSoup
+
 
 #from sklearn.feature_extraction.text import TfidfVectorizer
 #import spacy

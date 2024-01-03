@@ -123,7 +123,7 @@ class job_market:
     IQR_max = Q3_max - Q1_max
     lower_bound_max = Q1_max - 1.5 * IQR_max
     upper_bound_max = Q3_max + 1.5 * IQR_max
-    data_df = data_df[(data_df['maximumSalary'] >= lower_bound_max) & (data_df['maximumSalary'] <= upper_bound_max)]
+    data_df = data_df[(data_df['maximumSalary'] >= lower_bound_max) & (data_df['maximumSalary'] <= upper_bound_max)].reset_index()
 
 
     # Plotting
@@ -139,7 +139,6 @@ class job_market:
 
     # Styling
     plt.title('Salary Ranges for Job Listings')
-    plt.xlabel('Job Listing Index')
     plt.ylabel('Salary')
     plt.legend()
     plt.grid(True)

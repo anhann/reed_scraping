@@ -216,7 +216,7 @@ def main():
             
                     # Using Matplotlib for a stacked horizontal bar chart
                     fig, ax = plt.subplots()
-                    ax.barh("Salary Comparison", user_percentile, color='green', label='Your Salary Percentile')
+                    ax.barh("Salary Comparison", user_percentile, color='lightskyblue', label='Your Salary Percentile')
                     ax.barh("Salary Comparison", 100 - user_percentile, left=user_percentile, color='grey', label='Rest of Market')
                     ax.set_xlabel('Percentile')
                     ax.set_title('Your Position in the Salary Market')

@@ -140,10 +140,7 @@ class job_market:
     plt.legend()
     plt.grid(True)
     st.pyplot(plt)
-
-api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'
-
-def compare_salary(self, user_salary, data_df, location=None):
+  def compare_salary(self, user_salary, data_df, location=None):
     # Filter data by location if specified
     if location:
         data_df = data_df[data_df['locationName'] == location]
@@ -158,6 +155,10 @@ def compare_salary(self, user_salary, data_df, location=None):
     user_percentile = np.searchsorted(percentiles, user_salary)
 
     return f"Your salary is in the top {100 - user_percentile}% of the market."
+
+api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'
+
+
 
 
 # Initialize your class (replace 'your_api_key' with your actual key)

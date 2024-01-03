@@ -225,11 +225,10 @@ def main():
         with st.expander("Compare Your Salary to Market"):
             user_salary = st.number_input("Enter Your Salary", min_value=0)
             location = st.selectbox("Select Location (optional)", ['Nationwide'] + list(data_df['locationName'].unique()))
-            if st.button("Compare Salary"):
-                if location == 'Nationwide':
-                    location = None
-                comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
-                st.write(comparison_result)
+            if location == 'Nationwide':
+                location = None
+            comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
+            st.write(comparison_result)
         
                 # Using Matplotlib for a stacked horizontal bar chart
                 fig, ax = plt.subplots(figsize=(12,3))

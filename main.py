@@ -195,10 +195,6 @@ def main():
 
     if 'data_df' not in st.session_state:
         st.session_state['data_df'] = None
-    if 'salary_expander' not in st.session_state:
-        st.session_state['salary_expander'] = False
-    if 'location_expander' not in st.session_state:
-        st.session_state['location_expander'] = False
 
     job_title = st.text_input("Enter Job Title")
     if st.button("Click to get data"):
@@ -229,8 +225,15 @@ def main():
             st.write("Note: Outliers are removed")
             job_api.plot_salary_ranges(data_df)
 
-        with st.expander("Compare Your Salary to Market"):
+       #keep the tab open 
+       def toggle_salary_expander():
+          st.session_state['salary_expander'] = not st.session_state['salary_expander']
+          st.session_state['location_expander'] = not st.session_state['location_expander']
+         
+        with st.expander("Compare Your Salary to Market", expanded=st.session_state['salary_expander'], on_change=toggle_salary_expander):
             user_salary = st.number_input("Enter Your Salary", min_value=0)
+              # Define a callback to update the state of the expander
+
             location = st.selectbox("Select Location (optional)", ['Nationwide'] + list(data_df['locationName'].unique()))
             if location == 'Nationwide':
                 location = None
@@ -246,9 +249,7 @@ def main():
             ax.legend()
             plt.tight_layout()  # Adjust layout to fit all labels
             st.pyplot(fig)
-            st.session_state['salary_expander'] = True
-            st.session_state['location_expander'] = True
-              
+
         with st.expander("View Jobs' details by Location"):
             unique_locations = data_df['locationName'].unique()
             selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)

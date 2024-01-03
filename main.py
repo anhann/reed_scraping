@@ -146,8 +146,10 @@ class job_market:
         data_df = data_df[data_df['locationName'] == location]
 
     # Merge min and max salaries into a single range
+    sal_df=data_df[['minimumSalary','maximumSalary']]
+    sal_df=sal_df.dropna()
     all_salaries = []
-    for _, row in data_df.iterrows():
+    for _, row in sal_df.iterrows():
         all_salaries.extend(list(range(int(row['minimumSalary']), int(row['maximumSalary']) + 1)))
 
     # Calculate percentiles

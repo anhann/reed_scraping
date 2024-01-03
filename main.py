@@ -143,6 +143,22 @@ class job_market:
 
 api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'
 
+def compare_salary(self, user_salary, data_df, location=None):
+    # Filter data by location if specified
+    if location:
+        data_df = data_df[data_df['locationName'] == location]
+
+    # Merge min and max salaries into a single range
+    all_salaries = []
+    for _, row in data_df.iterrows():
+        all_salaries.extend(list(range(int(row['minimumSalary']), int(row['maximumSalary']) + 1)))
+
+    # Calculate percentiles
+    percentiles = np.percentile(all_salaries, list(range(0, 101)))
+    user_percentile = np.searchsorted(percentiles, user_salary)
+
+    return f"Your salary is in the top {100 - user_percentile}% of the market."
+
 
 # Initialize your class (replace 'your_api_key' with your actual key)
 job_api = job_market('646bb8ba-a4bf-4d22-b895-b62fdc8a2996')
@@ -184,22 +200,45 @@ def main():
             st.write("Note: Outliers are removed")
             job_api.plot_salary_ranges(data_df)
 
-        unique_locations = data_df['locationName'].unique()
-        selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)
-
-        if selected_location:
-            filtered_data = data_df[data_df['locationName'] == selected_location]
-                   # Iterate through the filtered data and display clickable URLs
-            for index, row in filtered_data.iterrows():
-                job_title = row['jobTitle']
-                salary_range = f"{row['minimumSalary']} - {row['maximumSalary']}"
-                employer = row['employerName']
-                applications = row['applications']
-                job_url = row['jobUrl']
-    
-                # Create a markdown string with a clickable link
-                job_link = f"[{job_title}]({job_url})"
-                st.markdown(f"{job_link} - Salary: {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
+        with st.expander("Compare Your Salary to Market"):
+            user_salary = st.number_input("Enter Your Salary", min_value=0)
+            location = st.selectbox("Select Location (optional)", ['Nationwide'] + list(data_df['locationName'].unique()))
+            if st.button("Compare Salary"):
+                if location == 'Nationwide':
+                    location = None
+                comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
+                st.write(comparison_result)
+        
+                # Create a bar chart to visualize the percentile
+                percentile_data = {'Percentile': [user_percentile], 'Rest of Market': [100 - user_percentile]}
+                df_percentile = pd.DataFrame(percentile_data)
+                
+                st.bar_chart(df_percentile)
+        
+                # Alternatively, using Matplotlib for more customization
+                fig, ax = plt.subplots()
+                ax.bar(['Your Salary Percentile', 'Rest of Market'], [user_percentile, 100 - user_percentile], color=['blue', 'grey'])
+                ax.set_ylabel('Percentile')
+                ax.set_title('Salary Market Position')
+                st.pyplot(fig)
+          
+        with st.expander("View Jobs' details by Location")
+                unique_locations = data_df['locationName'].unique()
+                selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)
+        
+                if selected_location:
+                    filtered_data = data_df[data_df['locationName'] == selected_location]
+                           # Iterate through the filtered data and display clickable URLs
+                    for index, row in filtered_data.iterrows():
+                        job_title = row['jobTitle']
+                        salary_range = f"{row['minimumSalary']} - {row['maximumSalary']}"
+                        employer = row['employerName']
+                        applications = row['applications']
+                        job_url = row['jobUrl']
+            
+                        # Create a markdown string with a clickable link
+                        job_link = f"[{job_title}]({job_url})"
+                        st.markdown(f"{job_link} - Salary: {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

@@ -195,6 +195,10 @@ def main():
 
     if 'data_df' not in st.session_state:
         st.session_state['data_df'] = None
+    if 'salary_expander' not in st.session_state:
+        st.session_state['salary_expander'] = False
+    if 'location_expander' not in st.session_state:
+        st.session_state['location_expander'] = False
 
     job_title = st.text_input("Enter Job Title")
     if st.button("Click to get data"):
@@ -242,6 +246,8 @@ def main():
             ax.legend()
             plt.tight_layout()  # Adjust layout to fit all labels
             st.pyplot(fig)
+            st.session_state['salary_expander'] = True
+            st.session_state['location_expander'] = True
               
         with st.expander("View Jobs' details by Location"):
             unique_locations = data_df['locationName'].unique()

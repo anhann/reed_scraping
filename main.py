@@ -217,8 +217,7 @@ def main():
                 # Create a bar chart to visualize the percentile
                 percentile_data = {'Percentile': [user_percentile], 'Rest of Market': [100 - user_percentile]}
                 df_percentile = pd.DataFrame(percentile_data)
-                
-                st.bar_chart(df_percentile)
+
         
                 # Alternatively, using Matplotlib for more customization
                 fig, ax = plt.subplots()

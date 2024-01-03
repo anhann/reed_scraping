@@ -185,7 +185,7 @@ def main():
             job_api.plot_salary_ranges(data_df)
 
         unique_locations = data_df['locationName'].unique()
-        selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations)
+        selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)
 
         if selected_location:
             filtered_data = data_df[data_df['locationName'] == selected_location]

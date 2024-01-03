@@ -28,6 +28,21 @@ class job_market:
     response = requests.get(url, headers=self.headers)
     data_json = response.json()
     data_df = pd.DataFrame(data_json['results'])
+    for i in data_df['jobId']:
+      url = f'https://www.reed.co.uk/api/1.0/jobs/{i}'
+      response = requests.get(url, headers=self.headers)
+      data_json = response.json()
+      job_description = data_json['jobDescription']
+
+      soup = BeautifulSoup(job_description, 'html.parser')
+      job_description = soup.get_text()
+      data_df.loc[data_df.jobId==i,'jobDescription'] = job_description
+
+    return data_df
+
+  def job_stats(self, data_df):
+
+
     # Ensure 'date' column is in datetime format
     data_df['date'] = pd.to_datetime(data_df['date'])
 
@@ -36,13 +51,9 @@ class job_market:
 
     # Filter out posts older than 3 months
     data_df = data_df[data_df['date'] > a_month_ago].reset_index()
-
-    return data_df
-    return data_df
-
-  def job_stats(self, data_df):
     total_job = len(data_df)
     job_per_day = total_job/30
+
     # calculae application per job (need to be posted at least 2 week)
     two_weeks_ago = datetime.now() - timedelta(days=14)
 
@@ -54,6 +65,12 @@ class job_market:
   def plot_jobs_by_date(self, data_df, aggregation='day'):
     # Ensure 'date' column is in datetime format
     data_df['date'] = pd.to_datetime(data_df['date'])
+
+    # Calculate the date 3 months ago from today
+    a_month_ago = datetime.now() - timedelta(days=30)
+
+    # Filter out posts older than 3 months
+    data_df = data_df[data_df['date'] > a_month_ago].reset_index()
 
     if aggregation == 'day':
       data_grouped = data_df.groupby(data_df['date'].dt.date).size()
@@ -106,7 +123,7 @@ class job_market:
 
     # Scatter plot for min and max salaries
     plt.scatter(data_df.index, data_df['minimumSalary'], color='blue', label='Minimum Salary')
-    plt.scatter(data_df.index, data_df['maximumSalary'], color='red', label='Maximum Salary')
+    plt.scatter(data_df.index, data_df['maximumSalary'], color='green', label='Maximum Salary')
 
     # Connect min and max salaries with a line for each job
     for idx in data_df.index:
@@ -119,7 +136,6 @@ class job_market:
     plt.legend()
     plt.grid(True)
     st.pyplot(plt)
-
 
 api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'
 

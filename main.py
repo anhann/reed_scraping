@@ -214,17 +214,14 @@ def main():
                 comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
                 st.write(comparison_result)
         
-                # Create a bar chart to visualize the percentile
-                percentile_data = {'Percentile': [user_percentile], 'Rest of Market': [100 - user_percentile]}
-                df_percentile = pd.DataFrame(percentile_data)
-
-        
-                # Alternatively, using Matplotlib for more customization
+                # Using Matplotlib for horizontal bar chart
                 fig, ax = plt.subplots()
                 ax.barh(['Your Salary Percentile', 'Rest of Market'], [user_percentile, 100 - user_percentile], color=['blue', 'grey'])
                 ax.set_xlabel('Percentile')
                 ax.set_title('Salary Market Position')
+                plt.tight_layout()  # Adjust layout to fit all labels
                 st.pyplot(fig)
+
           
         with st.expander("View Jobs' details by Location"):
                 unique_locations = data_df['locationName'].unique()

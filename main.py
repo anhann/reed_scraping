@@ -30,15 +30,15 @@ class job_market:
     response = requests.get(url, headers=self.headers)
     data_json = response.json()
     data_df = pd.DataFrame(data_json['results'])
-    for i in data_df['jobId']:
-      url = f'https://www.reed.co.uk/api/1.0/jobs/{i}'
-      response = requests.get(url, headers=self.headers)
-      data_json = response.json()
-      job_description = data_json['jobDescription']
+    #for i in data_df['jobId']:
+      #url = f'https://www.reed.co.uk/api/1.0/jobs/{i}'
+      #response = requests.get(url, headers=self.headers)
+      #data_json = response.json()
+      #job_description = data_json['jobDescription']
 
-      soup = BeautifulSoup(job_description, 'html.parser')
-      job_description = soup.get_text()
-      data_df.loc[data_df.jobId==i,'jobDescription'] = job_description
+      #soup = BeautifulSoup(job_description, 'html.parser')
+      #job_description = soup.get_text()
+      #data_df.loc[data_df.jobId==i,'jobDescription'] = job_description
 
     return data_df
 

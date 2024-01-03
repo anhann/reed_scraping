@@ -232,23 +232,24 @@ def main():
          
         with st.expander("Compare Your Salary to Market", expanded=st.session_state['salary_expander'], on_change=toggle_salary_expander):
             user_salary = st.number_input("Enter Your Salary", min_value=0)
-              # Define a callback to update the state of the expander
 
-            location = st.selectbox("Select Location (optional)", ['Nationwide'] + list(data_df['locationName'].unique()))
-            if location == 'Nationwide':
-                location = None
-            comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
-            st.write(comparison_result)
-        
-            # Using Matplotlib for a stacked horizontal bar chart
-            fig, ax = plt.subplots(figsize=(12,3))
-            ax.barh("Salary Comparison", user_percentile+1, color='lightskyblue', label='Your Salary Percentile')
-            ax.barh("Salary Comparison", 99 - user_percentile, left=user_percentile, color='silver', label='Rest of Market')
-            ax.set_xlabel('Percentile')
-            ax.set_title('Your Position in the Salary Market')
-            ax.legend()
-            plt.tight_layout()  # Adjust layout to fit all labels
-            st.pyplot(fig)
+            if st.button("Compare Salary"):
+
+                location = st.selectbox("Select Location (optional)", ['Nationwide'] + list(data_df['locationName'].unique()))
+                if location == 'Nationwide':
+                    location = None
+                comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
+                st.write(comparison_result)
+            
+                # Using Matplotlib for a stacked horizontal bar chart
+                fig, ax = plt.subplots(figsize=(12,3))
+                ax.barh("Salary Comparison", user_percentile+1, color='lightskyblue', label='Your Salary Percentile')
+                ax.barh("Salary Comparison", 99 - user_percentile, left=user_percentile, color='silver', label='Rest of Market')
+                ax.set_xlabel('Percentile')
+                ax.set_title('Your Position in the Salary Market')
+                ax.legend()
+                plt.tight_layout()  # Adjust layout to fit all labels
+                st.pyplot(fig)
 
         with st.expander("View Jobs' details by Location"):
             unique_locations = data_df['locationName'].unique()

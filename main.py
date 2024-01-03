@@ -209,39 +209,48 @@ def main():
             user_salary = st.number_input("Enter Your Salary", min_value=0)
             location = st.selectbox("Select Location (optional)", ['Nationwide'] + list(data_df['locationName'].unique()))
             if st.button("Compare Salary"):
-                    if location == 'Nationwide':
-                        location = None
-                    comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
-                    st.write(comparison_result)
-            
-                    # Using Matplotlib for a stacked horizontal bar chart
-                    fig, ax = plt.subplots()
-                    ax.barh("Salary Comparison", user_percentile, color='lightskyblue', label='Your Salary Percentile')
-                    ax.barh("Salary Comparison", 100 - user_percentile, left=user_percentile, color='grey', label='Rest of Market')
-                    ax.set_xlabel('Percentile')
-                    ax.set_title('Your Position in the Salary Market')
-                    ax.legend()
-                    plt.tight_layout()  # Adjust layout to fit all labels
-                    st.pyplot(fig)
+                if location == 'Nationwide':
+                    location = None
+                comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
+                st.write(comparison_result)
+        
+                # Using Matplotlib for histogram-like plot
+                fig, ax = plt.subplots()
+                
+                # Create a range of salary bins
+                salary_bins = range(int(data_df['minimumSalary'].min()), int(data_df['maximumSalary'].max()) + 1, 1000)  # Adjust bin size as needed
+        
+                # Plot all salaries in grey
+                ax.hist(data_df['minimumSalary'], bins=salary_bins, color='silver', label='Market Salary Range')
+        
+                # Highlight user's salary in light blue
+                ax.axvline(x=user_salary, color='lightskyblue', linewidth=2, label='Your Salary')
+        
+                ax.set_xlabel('Salary')
+                ax.set_ylabel('Frequency')
+                ax.set_title('Your Position in the Salary Market')
+                ax.legend()
+                plt.tight_layout()  # Adjust layout to fit all labels
+                st.pyplot(fig)
 
           
         with st.expander("View Jobs' details by Location"):
-                unique_locations = data_df['locationName'].unique()
-                selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)
+            unique_locations = data_df['locationName'].unique()
+            selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)
+    
+            if selected_location:
+                filtered_data = data_df[data_df['locationName'] == selected_location]
+                       # Iterate through the filtered data and display clickable URLs
+                for index, row in filtered_data.iterrows():
+                    job_title = row['jobTitle']
+                    salary_range = f"{row['minimumSalary']} - {row['maximumSalary']}"
+                    employer = row['employerName']
+                    applications = row['applications']
+                    job_url = row['jobUrl']
         
-                if selected_location:
-                    filtered_data = data_df[data_df['locationName'] == selected_location]
-                           # Iterate through the filtered data and display clickable URLs
-                    for index, row in filtered_data.iterrows():
-                        job_title = row['jobTitle']
-                        salary_range = f"{row['minimumSalary']} - {row['maximumSalary']}"
-                        employer = row['employerName']
-                        applications = row['applications']
-                        job_url = row['jobUrl']
-            
-                        # Create a markdown string with a clickable link
-                        job_link = f"[{job_title}]({job_url})"
-                        st.markdown(f"{job_link} - Salary: {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
+                    # Create a markdown string with a clickable link
+                    job_link = f"[{job_title}]({job_url})"
+                    st.markdown(f"{job_link} - Salary: {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

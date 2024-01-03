@@ -62,8 +62,8 @@ class job_market:
     # Filter out posts older than 3 months
     qualified_jobs = data_df[data_df['date'] <= two_weeks_ago]
     application_per_job = np.mean(qualified_jobs['applications'])
-    med_min=np.median(data_df['minimumSalary'])
-    med_max=np.median(data_df['maximumSalary'])
+    med_min=np.median(data_df['minimumSalary'].dropna())
+    med_max=np.median(data_df['maximumSalary'].dropna())
     return total_job, job_per_day, application_per_job, med_min, med_max
 
   def plot_jobs_by_date(self, data_df, aggregation='day'):

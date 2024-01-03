@@ -62,7 +62,9 @@ class job_market:
     # Filter out posts older than 3 months
     qualified_jobs = data_df[data_df['date'] <= two_weeks_ago]
     application_per_job = np.mean(qualified_jobs['applications'])
-    return total_job, job_per_day, application_per_job
+    med_min=np.median(data_df['minimumSalary'])
+    med_max=np.median(data_df['maximumSalary'])
+    return total_job, job_per_day, application_per_job, med_min, med_max
 
   def plot_jobs_by_date(self, data_df, aggregation='day'):
     # Ensure 'date' column is in datetime format
@@ -168,8 +170,8 @@ def main():
         data_df = st.session_state['data_df']
 
         # Display job stats
-        total_job, job_per_day, application_per_job = job_api.job_stats(data_df)
-        st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}")
+        total_job, job_per_day, application_per_job, med_min, med_max = job_api.job_stats(data_df)
+        st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}, Type salary range: £{med_min} to £{med_max}")
         st.write(f"Jobs counts in last 30 days. Number of applications per job is only considered jobs that have been posted for more than 2 weeks")
 
         with st.expander("View Number of Jobs Plot"):

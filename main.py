@@ -215,7 +215,7 @@ def main():
                 st.write(comparison_result)
         
                 # Combine min and max salaries
-                all_salaries = np.concatenate([data_df['minimumSalary'].values, data_df['maximumSalary'].values])
+                all_salaries = np.concatenate([data_df['minimumSalary'].dropna().values, data_df['maximumSalary'].dropna().values])
         
                 # Create histogram
                 fig, ax = plt.subplots()

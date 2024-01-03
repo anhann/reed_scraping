@@ -46,7 +46,7 @@ class job_market:
 
 
     # Ensure 'date' column is in datetime format
-    data_df['date'] = pd.to_datetime(data_df['date'])
+    data_df['date'] = pd.to_datetime(data_df['date'], format='%d/%m/%Y')
 
     # Calculate the date 3 months ago from today
     a_month_ago = datetime.now() - timedelta(days=30)
@@ -68,7 +68,7 @@ class job_market:
 
   def plot_jobs_by_date(self, data_df, aggregation='day'):
     # Ensure 'date' column is in datetime format
-    data_df['date'] = pd.to_datetime(data_df['date'])
+    data_df['date'] = pd.to_datetime(data_df['date'], format='%d/%m/%Y')
 
     # Calculate the date 3 months ago from today
     a_month_ago = datetime.now() - timedelta(days=30)

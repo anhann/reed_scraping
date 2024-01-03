@@ -215,14 +215,13 @@ def main():
                 st.write(comparison_result)
         
                 # Using Matplotlib for a stacked horizontal bar chart
-                fig, ax = plt.subplots()
+                fig, ax = plt.subplots(figsize=(12,3))
                 ax.barh("Salary Comparison", user_percentile, color='lightskyblue', label='Your Salary Percentile')
                 ax.barh("Salary Comparison", 100 - user_percentile, left=user_percentile, color='silver', label='Rest of Market')
                 ax.set_xlabel('Percentile')
                 ax.set_title('Your Position in the Salary Market')
                 ax.legend()
                 plt.tight_layout()  # Adjust layout to fit all labels
-                plt.figure(figsize=(12,3))
                 st.pyplot(fig)
               
         with st.expander("View Jobs' details by Location"):

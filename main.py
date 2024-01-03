@@ -154,11 +154,14 @@ class job_market:
 
     # Calculate percentiles
     percentiles = np.percentile(all_salaries, list(range(0, 101)))
-    user_percentile = np.searchsorted(percentiles, user_salary)
+    user_percentile = np.searchsorted(percentiles, user_salary, side='right')
 
-    comparison_result = f"Your salary is in the top {100 - user_percentile}% of the market."
+    # Calculate the percentage of the market the user's salary is higher than
+    market_higher_than = max(0, user_percentile - 1)  # Ensures it doesn't go below 0
 
-    return comparison_result, 100 - user_percentile
+    comparison_result = f"Your salary is higher than {market_higher_than}% of the market."
+
+    return comparison_result, market_higher_than
 
 api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'
 
@@ -216,8 +219,8 @@ def main():
         
                 # Using Matplotlib for a stacked horizontal bar chart
                 fig, ax = plt.subplots(figsize=(12,3))
-                ax.barh("Salary Comparison", user_percentile, color='lightskyblue', label='Your Salary Percentile')
-                ax.barh("Salary Comparison", 100 - user_percentile, left=user_percentile, color='silver', label='Rest of Market')
+                ax.barh("Salary Comparison", user_percentile+1, color='lightskyblue', label='Your Salary Percentile')
+                ax.barh("Salary Comparison", 99 - user_percentile, left=user_percentile, color='silver', label='Rest of Market')
                 ax.set_xlabel('Percentile')
                 ax.set_title('Your Position in the Salary Market')
                 ax.legend()

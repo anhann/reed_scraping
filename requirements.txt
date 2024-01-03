@@ -8,4 +8,5 @@ datetime
 scikit-learn
 gensim
 tensorflow
+bs4
 

@@ -156,7 +156,9 @@ class job_market:
     percentiles = np.percentile(all_salaries, list(range(0, 101)))
     user_percentile = np.searchsorted(percentiles, user_salary)
 
-    return f"Your salary is in the top {100 - user_percentile}% of the market."
+    comparison_result = f"Your salary is in the top {100 - user_percentile}% of the market."
+
+    return comparison_result, 100 - user_percentile
 
 api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'
 

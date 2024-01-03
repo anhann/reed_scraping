@@ -214,24 +214,17 @@ def main():
                 comparison_result, user_percentile = job_api.compare_salary(user_salary, data_df, location)
                 st.write(comparison_result)
         
-                # Combine min and max salaries
-                all_salaries = np.concatenate([data_df['minimumSalary'].dropna().values, data_df['maximumSalary'].dropna().values])
-        
-                # Create histogram
+                # Using Matplotlib for a stacked horizontal bar chart
                 fig, ax = plt.subplots()
-                bin_size = 20  # Adjust as needed
-                bins = np.arange(all_salaries.min(), all_salaries.max() + bin_size, bin_size)
-                ax.hist(all_salaries, bins=bins, color='silver', label='Market Salary Range')
-        
-                # Highlight user's salary
-                ax.axvline(x=user_salary, color='lightskyblue', linewidth=2, label='Your Salary')
-                ax.set_xlabel('Salary')
-                ax.set_ylabel('Frequency')
+                ax.barh("Salary Comparison", user_percentile, color='lightskyblue', label='Your Salary Percentile')
+                ax.barh("Salary Comparison", 100 - user_percentile, left=user_percentile, color='silver', label='Rest of Market')
+                ax.set_xlabel('Percentile')
                 ax.set_title('Your Position in the Salary Market')
                 ax.legend()
-                plt.tight_layout()
+                plt.tight_layout()  # Adjust layout to fit all labels
+                plt.figure(figsize=(12,6))
                 st.pyplot(fig)
-          
+              
         with st.expander("View Jobs' details by Location"):
             unique_locations = data_df['locationName'].unique()
             selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)

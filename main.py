@@ -153,14 +153,14 @@ class job_market:
     IQR_min = Q3_min - Q1_min
     lower_bound_min = Q1_min - 1.5 * IQR_min
     upper_bound_min = Q3_min + 1.5 * IQR_min
-    data_df = data_df[(data_df['minimumSalary'] >= lower_bound_min) & (data_df['minimumSalary'] <= upper_bound_min)]
+    data_df = data_df[(data_df['minimumSalary'] >= lower_bound_min)]
 
     Q1_max = data_df['maximumSalary'].quantile(0.25)
     Q3_max = data_df['maximumSalary'].quantile(0.75)
     IQR_max = Q3_max - Q1_max
     lower_bound_max = Q1_max - 1.5 * IQR_max
     upper_bound_max = Q3_max + 1.5 * IQR_max
-    data_df = data_df[(data_df['maximumSalary'] >= lower_bound_max) & (data_df['maximumSalary'] <= upper_bound_max)]
+    data_df = data_df[(data_df['maximumSalary'] <= upper_bound_max)]
 
     # Merge min and max salaries into a single range
     sal_df=data_df[['minimumSalary','maximumSalary']]

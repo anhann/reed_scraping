@@ -327,10 +327,6 @@ def main():
 
     if 'data_df' not in st.session_state:
         st.session_state['data_df'] = None
-    if 'salary_expander' not in st.session_state:
-        st.session_state['salary_expander'] = False
-    if 'location_expander' not in st.session_state:
-        st.session_state['location_expander'] = False
 
     job_title = st.text_input("Enter Job Title")
     if st.button("Click to get data"):
@@ -352,22 +348,18 @@ def main():
         st.write(f"Total Jobs: {total_job}, Jobs per Day: {job_per_day:.2f}, Applications per Job: {application_per_job:.2f}, Typical salary range: £{med_min: .0f} to £{med_max: .0f}")
         st.write(f"Jobs counts in last 30 days. Number of applications per job is only considered jobs that have been posted for more than 2 weeks")
 
-        with st.expander("View Number of Jobs Plot"):
+        if st.button("View Number of Jobs Plot"):
             selected_aggregation = st.session_state.get('aggregation', 'day')
             aggregation = st.radio("Select Aggregation Type", ('day', 'week'), index=('day', 'week').index(selected_aggregation))
             st.session_state['aggregation'] = aggregation
             job_api.plot_jobs_by_date(data_df, aggregation)
 
-        with st.expander("View Salary Ranges"):
+        if st.button("View Salary Ranges"):
             st.write("Note: Outliers are removed")
             job_api.plot_salary_ranges(data_df)
 
-        #keep the tab open 
-        def toggle_salary_expander():
-            st.session_state['salary_expander'] = not st.session_state['salary_expander']
-            st.session_state['location_expander'] = not st.session_state['location_expander']
            
-        with st.expander("Compare Your Salary to Market", expanded=st.session_state['salary_expander']):
+        if st.button("Compare Your Salary to Market"):
             user_salary = st.number_input("Enter Your Salary", min_value=0)
 
             if st.button("Compare Salary"):
@@ -388,11 +380,11 @@ def main():
                 plt.tight_layout()  # Adjust layout to fit all labels
                 st.pyplot(fig)
               
-        with st.expander("View key Job requirements"):
+        if st.button("View key Job requirements"):
             skill_required = SkillRequired()
             skill_required.visualisation(data_df)
 
-        with st.expander("View Jobs' details by Location"):
+        if st.button("View Jobs' details by Location"):
             unique_locations = data_df['locationName'].unique()
             selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)
     

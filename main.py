@@ -406,6 +406,8 @@ def main():
                     st.markdown(f"{job_link} - Salary: {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
 
         with st.expander("View key Job requirements"):
+            loading_message = st.markdown("Analysing job descriptions, this might take a while...")
+            loading_message.empty()
             df=job_api.get_job_desc(df)
             skill_required = SkillRequired()
             skill_required.visualisation(df)

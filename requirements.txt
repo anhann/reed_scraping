@@ -11,7 +11,7 @@ tensorflow
 bs4
 contractions
 nltk
-spacy>=3.0.0,<4.0.0
+spacy
 https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.0.0/en_core_web_lg-3.0.0.tar.gz
 re
 collections

@@ -336,6 +336,7 @@ def main():
     if st.button("Click to get data"):
         loading_message = st.markdown("Fetching job data, this might take a while...")
         data_df = job_api.get_data(job_title)
+        data_df=job_api.get_job_desc(data_df)
         loading_message.empty()
         if not data_df.empty:
             st.session_state['data_df'] = data_df
@@ -406,11 +407,8 @@ def main():
                     st.markdown(f"{job_link} - Salary: {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
 
         with st.expander("View key Job requirements"):
-            loading_message = st.markdown("Analysing job descriptions, this might take a while...")
-            loading_message.empty()
-            df=job_api.get_job_desc(data_df)
             skill_required = SkillRequired()
-            skill_required.visualisation(df)
+            skill_required.visualisation(data_df)
 
 if __name__ == "__main__":
     main()

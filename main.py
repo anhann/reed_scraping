@@ -359,7 +359,7 @@ def main():
             job_api.plot_salary_ranges(data_df)
 
            
-        with st.expander("Compare Your Salary to Market"):
+        with st.container("Compare Your Salary to Market"):
             user_salary = st.number_input("Enter Your Salary", min_value=0)
 
             if st.button("Compare Salary"):

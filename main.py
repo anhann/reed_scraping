@@ -8,16 +8,17 @@ from datetime import datetime, timedelta
 import streamlit as st
 from bs4 import BeautifulSoup
 
+import re
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from collections import defaultdict
+import spacy
+from spacy.util import filter_spans
+from spacy.tokens import Span
+import contractions
 
-#from sklearn.feature_extraction.text import TfidfVectorizer
-#import spacy
-#from gensim import corpora, models
-#from gensim.models import Word2Vec
-#from tensorflow.keras.models import Sequential
-#from tensorflow.keras.layers import LSTM, Dense, Embedding
-#from tensorflow.keras.preprocessing.text import Tokenizer
-#from tensorflow.keras.preprocessing.sequence import pad_sequences
-#from sklearn.model_selection import train_test_split
+
 
 class job_market:
   def __init__(self, api_key):
@@ -39,6 +40,21 @@ class job_market:
       #soup = BeautifulSoup(job_description, 'html.parser')
       #job_description = soup.get_text()
       #data_df.loc[data_df.jobId==i,'jobDescription'] = job_description
+
+    return data_df
+
+  def get_job_desc(self, data_df):
+    data_df=data_df.drop_duplicates(subset=['jobDescription'])
+    for i in data_df['jobId']:
+      url = f'https://www.reed.co.uk/api/1.0/jobs/{i}'
+      response = requests.get(url, headers=self.headers)
+      data_json = response.json()
+      job_description = data_json['jobDescription']
+  
+      soup = BeautifulSoup(job_description, 'html.parser')
+      # Use newline character as separator
+      job_description = soup.get_text(separator=' ')
+      data_df.loc[data_df.jobId==i, 'jobDescription'] = job_description
 
     return data_df
 
@@ -180,9 +196,125 @@ class job_market:
 
     return comparison_result, market_higher_than
 
+
+
+class SkillRequired:
+    def __init__(self):
+        nltk.download('punkt')
+        nltk.download('averaged_perceptron_tagger')
+        nltk.download('stopwords')
+        self.nlp = spacy.load('en_core_web_lg')
+        self.stop_words = set(stopwords.words('english'))
+        self.EXP_TERMS = ['knowledge', 'skills', 'experience', 'ability', 'excellent']  # Add more terms as needed
+
+    def clean_text(self, text):
+        text = str.lower(text)
+        text = re.sub(r'([.,/\\()])(?=[^\s])(?=[A-Za-z])', r'\1 ', text)
+        return re.sub(r'[^\w\d\s\'-]+', '', text)
+
+    def get_left_span(self, tok, label='', include=True):
+        offset = 1 if include else 0
+        idx = tok.i
+        while idx > tok.left_edge.i:
+            if tok.doc[idx - 1].pos_ in ('NOUN', 'ADJ', 'X'):
+                idx -= 1
+            else:
+                break
+        return label, idx, tok.i + offset
+
+    def get_right_span(self, tok, label='', include=True):
+        offset = 1 if include else 0
+        idx = tok.i
+        while idx < tok.right_edge.i:
+            if tok.doc[idx + 1].pos_ in ('NOUN', 'ADJ', 'X'):
+                idx += 1
+            else:
+                break
+        return label, tok.i, idx + offset
+
+    def get_conjugations(self, tok):
+        new = [tok]
+        while new:
+            tok = new.pop()
+            yield tok
+            for child in tok.children:
+                if child.dep_ == 'conj':
+                    new.append(child)
+
+    def extract_adp_conj_experience(self, doc, label='TERM'):
+        for tok in doc:
+            if tok.lower_ in self.EXP_TERMS:
+                for child in tok.rights:
+                    if child.dep_ == 'prep':
+                        for obj in child.children:
+                            if obj.dep_ == 'pobj':
+                                for conj in self.get_conjugations(obj):
+                                    yield self.get_left_span(conj, label)
+                                    yield self.get_right_span(conj, label)
+
+    def get_extractions(self, examples, *extractors):
+        doc = self.nlp(examples, disable=['ner'])
+        for ent in filter_spans([Span(doc, start, end, label) for extractor in extractors for label, start, end in extractor(doc)]):
+            yield ent.text
+
+    def list_skills(self, examples, *extractors):
+        return list(self.get_extractions(examples, *extractors))
+
+
+    def process_descriptions(self, df):
+        # Fix contractions and clean text
+        df['jobDescription'] = df['jobDescription'].apply(lambda x: ' '.join([self.clean_text(contractions.fix(word)) for word in x.split()]))
+        
+        # Tokenize descriptions
+        df['tokenized_desc'] = df['jobDescription'].apply(word_tokenize)
+        
+        # Extract skills from each description
+        df['skills'] = df['jobDescription'].apply(lambda x: self.list_skills(x, self.extract_adp_conj_experience))
+        
+        skill_list=[]
+        for i in df['skills']:
+          skill_list+=i
+
+        skill_dict=dict()
+        for i in skill_list:
+          if i not in skill_dict.keys():
+            skill_dict[i]=1
+          else:
+            skill_dict[i]+=1
+
+
+        red= ['experience', 'skill', 'knowledge', 'role', 'ability', 'excelent', 'each', 'job', 'understanding', 'application', 'all', 'use']
+        for word in red:
+          if word in skill_dict.keys():
+            del skill_dict[word]
+
+        skill_df=pd.DataFrame(skill_dict.items(), columns=['skill','ct']).sort_values(by='ct', ascending=False)
+        
+        return skill_df
+
+    def visualisation(self, df):
+      skill_df = self.process_descriptions(df)
+
+      # Select the top N skills
+      top_n = 20  # You can change this number as needed
+      top_skills_df = skill_df.nlargest(top_n, 'ct')
+
+      # Plotting
+      plt.figure(figsize=(12, 8))  # You can adjust the size as needed
+      plt.barh(top_skills_df['skill'], top_skills_df['ct'], color='skyblue')
+      plt.gca().invert_yaxis()  # Invert y-axis to have the highest count at the top
+
+      # Add titles and labels
+      plt.title('Top 20 Skills Frequency')
+      plt.xlabel('Count')
+      plt.ylabel('Skills')
+
+      plt.tight_layout()  # Adjusts the plot to ensure everything fits without overlapping
+      st.pyplot(plt)
+
+
+
 api_key = '646bb8ba-a4bf-4d22-b895-b62fdc8a2996'
-
-
 
 
 # Initialize your class (replace 'your_api_key' with your actual key)
@@ -247,7 +379,7 @@ def main():
             
                 # Using Matplotlib for a stacked horizontal bar chart
                 fig, ax = plt.subplots(figsize=(12,3))
-                ax.barh("Salary Comparison", user_percentile+1, color='lightskyblue', label='Your Salary Percentile')
+                ax.barh("Salary Comparison", user_percentile+1, color='skyblue', label='Your Salary Percentile')
                 ax.barh("Salary Comparison", 99 - user_percentile, left=user_percentile, color='silver', label='Rest of Market')
                 ax.set_xlabel('Percentile')
                 ax.set_title('Your Position in the Salary Market')
@@ -272,6 +404,11 @@ def main():
                     # Create a markdown string with a clickable link
                     job_link = f"[{job_title}]({job_url})"
                     st.markdown(f"{job_link} - Salary: {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
+
+        with st.expander("View key Job requirements"):
+            df=job_api.get_job_desc(df)
+            skill_required = SkillRequired()
+            skill_required.visualisation(df)
 
 if __name__ == "__main__":
     main()

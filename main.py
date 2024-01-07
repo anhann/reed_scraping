@@ -283,7 +283,7 @@ class SkillRequired:
             skill_dict[i]+=1
 
 
-        red= ['experience', 'skill', 'knowledge', 'role', 'ability', 'excelent', 'each', 'job', 'understanding', 'application', 'all', 'use']
+        red= ['experience', 'skill', 'knowledge', 'role', 'ability', 'excelent', 'each', 'job', 'understanding', 'application', 'all', 'use', '']
         for word in red:
           if word in skill_dict.keys():
             del skill_dict[word]

@@ -384,7 +384,7 @@ def main():
             skill_required = SkillRequired()
             skill_required.visualisation(data_df)
 
-        witn st.expander("View Jobs' details by Location"):
+        with st.expander("View Jobs' details by Location"):
             unique_locations = data_df['locationName'].unique()
             selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)
     

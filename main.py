@@ -360,7 +360,7 @@ def main():
 
            
         with st.container(border=True):
-            container.write("Compare Your Salary to Market")
+            st.write("Compare Your Salary to Market")
             user_salary = st.number_input("Enter Your Salary", min_value=0)
 
             if st.button("Compare Salary"):

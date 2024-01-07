@@ -349,7 +349,7 @@ def main():
         st.write(f"Jobs counts in last 30 days. Number of applications per job is only considered jobs that have been posted for more than 2 weeks")
 
         with st.container(border=True):
-            st.header("Number of Jobs Plot")
+            st.header("Number of Jobs")
             selected_aggregation = st.session_state.get('aggregation', 'day')
             aggregation = st.radio("Select Aggregation Type", ('day', 'week'), index=('day', 'week').index(selected_aggregation))
             st.session_state['aggregation'] = aggregation

@@ -205,7 +205,7 @@ class SkillRequired:
         nltk.download('stopwords')
         self.nlp = spacy.load('en_core_web_lg')
         self.stop_words = set(stopwords.words('english'))
-        self.EXP_TERMS = ['knowledge', 'skills', 'experience', 'ability', 'excellent', 'tool', 'tools']  # Add more terms as needed
+        self.EXP_TERMS = ['knowledge', 'skills', 'experience', 'ability', 'excellent', 'such as']  # Add more terms as needed
 
     def clean_text(self, text):
         text = str.lower(text)

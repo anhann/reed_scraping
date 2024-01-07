@@ -408,7 +408,7 @@ def main():
         with st.expander("View key Job requirements"):
             loading_message = st.markdown("Analysing job descriptions, this might take a while...")
             loading_message.empty()
-            df=job_api.get_job_desc(df)
+            df=job_api.get_job_desc(data_df)
             skill_required = SkillRequired()
             skill_required.visualisation(df)
 

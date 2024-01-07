@@ -387,6 +387,10 @@ def main():
                 ax.legend()
                 plt.tight_layout()  # Adjust layout to fit all labels
                 st.pyplot(fig)
+              
+        with st.expander("View key Job requirements"):
+            skill_required = SkillRequired()
+            skill_required.visualisation(data_df)
 
         with st.expander("View Jobs' details by Location"):
             unique_locations = data_df['locationName'].unique()
@@ -406,9 +410,7 @@ def main():
                     job_link = f"[{job_title}]({job_url})"
                     st.markdown(f"{job_link} - Salary: {salary_range} - {employer} - {applications} applications", unsafe_allow_html=True)
 
-        with st.expander("View key Job requirements"):
-            skill_required = SkillRequired()
-            skill_required.visualisation(data_df)
+
 
 if __name__ == "__main__":
     main()

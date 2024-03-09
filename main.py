@@ -39,7 +39,18 @@ class job_market:
 
       #soup = BeautifulSoup(job_description, 'html.parser')
       #job_description = soup.get_text()
-      #data_df.loc[data_df.jobId==i,'jobDescription'] = job_description
+      #data_df.loc[data_df.jobId==i, 'jobDescription'] = job_description
+    #process location
+    post=pd.read_csv('Postcode districts.csv')
+    new_post=post[['Postcode', 'Region']]
+    data_df['town']=['' for i in range(len(df))]
+    for i in range(len(df)):
+      if any(j.isdigit() for j in data_df['locationName'][i])==True:
+        data_df['town'][i]= data_df['locationName'][i][:len(data_df['locationName'][i])-3] #+ ' ' + df['locationName'][i][len(df['locationName'])-3:]
+      else:
+        data_df['town'][i]=data_df['locationName'][i]
+    data_df=data_df.merge(new_post,left_on='town', right_on='Postcode', how='left')
+    data_df['Region'].fillna(data_df['town'], inplace=True)
 
     return data_df
 
@@ -391,11 +402,11 @@ def main():
 
         with st.container(border=True):
             st.header("View Jobs' details by Location")
-            unique_locations = data_df['locationName'].unique()
+            unique_locations = data_df['Region'].unique()
             selected_location = st.selectbox("Select Location to see Jobs' details", unique_locations, format_func=lambda x: '' if x is None else x)
     
             if selected_location:
-                filtered_data = data_df[data_df['locationName'] == selected_location]
+                filtered_data = data_df[data_df['Region'] == selected_location]
                        # Iterate through the filtered data and display clickable URLs
                 for index, row in filtered_data.iterrows():
                     job_title = row['jobTitle']

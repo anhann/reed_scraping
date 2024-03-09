@@ -44,7 +44,7 @@ class job_market:
     post=pd.read_csv('Postcode districts.csv')
     new_post=post[['Postcode', 'Region']]
     data_df['town']=['' for i in range(len(data_df))]
-    for i in range(len(df)):
+    for i in range(len(data_df)):
       if any(j.isdigit() for j in data_df['locationName'][i])==True:
         data_df['town'][i]= data_df['locationName'][i][:len(data_df['locationName'][i])-3] #+ ' ' + df['locationName'][i][len(df['locationName'])-3:]
       else:

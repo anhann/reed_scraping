@@ -214,7 +214,7 @@ class SkillRequired:
         nltk.download('punkt')
         nltk.download('averaged_perceptron_tagger')
         nltk.download('stopwords')
-        self.nlp = spacy.load('en_core_web_sm')
+        self.nlp = spacy.load('en_core_web_lg')
         self.stop_words = set(stopwords.words('english'))
         self.EXP_TERMS = ['knowledge', 'skills', 'experience', 'ability', 'excellent', 'such as']  # Add more terms as needed
 

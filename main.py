@@ -395,10 +395,10 @@ def main():
                 plt.tight_layout()  # Adjust layout to fit all labels
                 st.pyplot(fig)
               
-        with st.container(border=True):
-            st.header("Job requirements")
-            skill_required = SkillRequired()
-            skill_required.visualisation(data_df)
+        #with st.container(border=True):
+            #st.header("Job requirements")
+            #skill_required = SkillRequired()
+            #skill_required.visualisation(data_df)
 
         with st.container(border=True):
             st.header("View Jobs' details by Location")
